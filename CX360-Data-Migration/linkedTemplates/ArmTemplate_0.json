@@ -1,0 +1,653 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "CX360-Data-Migration"
+		},
+		"TgtDataMigrationCX360_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'TgtDataMigrationCX360'"
+		},
+		"CX360DataMigration_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'CX360DataMigration'"
+		},
+		"TgtDataMigrationCX360_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mukul5911gen2.dfs.core.windows.net/"
+		},
+		"CX360DataMigration_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "127.0.0.1"
+		},
+		"CX360DataMigration_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "cx360_testing1"
+		},
+		"CX360DataMigration_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "root"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/TgtDataMigrationCX360')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('TgtDataMigrationCX360_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('TgtDataMigrationCX360_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cx360datamigration')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TgtDataMigrationCX360",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "user.json",
+						"fileSystem": "cxmigrationdata"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TgtDataMigrationCX360')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TgtCopyData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TgtDataMigrationCX360",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						},
+						"fileSystem": "cxmigrationdata"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"user_key_id": {
+							"type": "integer"
+						},
+						"user_id": {
+							"type": "integer"
+						},
+						"role_id": {
+							"type": "integer"
+						},
+						"role_name": {
+							"type": "string"
+						},
+						"first_name": {
+							"type": "string"
+						},
+						"last_name": {
+							"type": "string"
+						},
+						"user_mobile": {
+							"type": "string"
+						},
+						"is_active": {
+							"type": "boolean"
+						},
+						"date_joined": {
+							"type": "string"
+						},
+						"user_email": {
+							"type": "string"
+						},
+						"organisation_id": {
+							"type": "integer"
+						},
+						"user_processes": {
+							"type": "string"
+						},
+						"empcode": {
+							"type": "string"
+						},
+						"tenure": {
+							"type": "string"
+						},
+						"bucket": {
+							"type": "string"
+						},
+						"status": {
+							"type": "string"
+						},
+						"active_flag": {
+							"type": "integer"
+						},
+						"start_date": {
+							"type": "string"
+						},
+						"end_date": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TgtDataMigrationCX360')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CX360DataMigration')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "For the data migration created a service link for MySQL",
+				"annotations": [],
+				"type": "MySql",
+				"typeProperties": {
+					"server": "[parameters('CX360DataMigration_properties_typeProperties_server')]",
+					"port": 3306,
+					"database": "[parameters('CX360DataMigration_properties_typeProperties_database')]",
+					"username": "[parameters('CX360DataMigration_properties_typeProperties_username')]",
+					"sslMode": 1,
+					"useSystemTrustStore": 0,
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('CX360DataMigration_password')]"
+					},
+					"driverVersion": "v2"
+				},
+				"connectVia": {
+					"referenceName": "cx360datamigration",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/cx360datamigration')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyDataToGen2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CX360DataMigration",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "MySqlTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": {
+						"value": "@dataset().table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CX360DataMigration')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MySqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CX360DataMigration",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "MySqlTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "`user_dim`"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CX360DataMigration')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MySqlTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CX360DataMigration",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "MySqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CX360DataMigration')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MySqlTable3')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CX360DataMigration",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "MySqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CX360DataMigration')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mysqltogen2pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Listoftables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "MySqlSource",
+								"query": "select table_schema, table_name from information_schema.TABLES\nwhere TABLE_TYPE = \"BASE TABLE\" and TABLE_SCHEMA = \"cx360_testing1\";"
+							},
+							"dataset": {
+								"referenceName": "MySqlTable2",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEachTable",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Listoftables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Listoftables').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "CopydatatoGen2",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "MySqlSource"
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "CopyDataToGen2",
+											"type": "DatasetReference",
+											"parameters": {
+												"table": {
+													"value": "@item().TABLE_NAME",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "TgtCopyData",
+											"type": "DatasetReference",
+											"parameters": {
+												"filename": {
+													"value": "@concat(item().TABLE_NAME,'.csv')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-17T07:32:38Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/MySqlTable2')]",
+				"[concat(variables('factoryId'), '/datasets/CopyDataToGen2')]",
+				"[concat(variables('factoryId'), '/datasets/TgtCopyData')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/mysqltosnowpipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "mysqltoGen2pipeline",
+						"description": "mysql to Gen2 pipeline",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "MySqlSource"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "user_key_id",
+											"type": "Int32"
+										},
+										"sink": {
+											"path": "$['user_key_id']"
+										}
+									},
+									{
+										"source": {
+											"name": "user_id",
+											"type": "Int32"
+										},
+										"sink": {
+											"path": "$['user_id']"
+										}
+									},
+									{
+										"source": {
+											"name": "role_id",
+											"type": "Int32"
+										},
+										"sink": {
+											"path": "$['role_id']"
+										}
+									},
+									{
+										"source": {
+											"name": "role_name",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['role_name']"
+										}
+									},
+									{
+										"source": {
+											"name": "first_name",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['first_name']"
+										}
+									},
+									{
+										"source": {
+											"name": "last_name",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['last_name']"
+										}
+									},
+									{
+										"source": {
+											"name": "user_mobile",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['user_mobile']"
+										}
+									},
+									{
+										"source": {
+											"name": "is_active",
+											"type": "Boolean"
+										},
+										"sink": {
+											"path": "$['is_active']"
+										}
+									},
+									{
+										"source": {
+											"name": "date_joined",
+											"type": "DateTime"
+										},
+										"sink": {
+											"path": "$['date_joined']"
+										}
+									},
+									{
+										"source": {
+											"name": "user_email",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['user_email']"
+										}
+									},
+									{
+										"source": {
+											"name": "organisation_id",
+											"type": "Int32"
+										},
+										"sink": {
+											"path": "$['organisation_id']"
+										}
+									},
+									{
+										"source": {
+											"name": "user_processes",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['user_processes']"
+										}
+									},
+									{
+										"source": {
+											"name": "empcode",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['empcode']"
+										}
+									},
+									{
+										"source": {
+											"name": "tenure",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['tenure']"
+										}
+									},
+									{
+										"source": {
+											"name": "bucket",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['bucket']"
+										}
+									},
+									{
+										"source": {
+											"name": "status",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$['status']"
+										}
+									},
+									{
+										"source": {
+											"name": "active_flag",
+											"type": "Int32"
+										},
+										"sink": {
+											"path": "$['active_flag']"
+										}
+									},
+									{
+										"source": {
+											"name": "start_date",
+											"type": "DateTime"
+										},
+										"sink": {
+											"path": "$['start_date']"
+										}
+									},
+									{
+										"source": {
+											"name": "end_date",
+											"type": "DateTime"
+										},
+										"sink": {
+											"path": "$['end_date']"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "MySqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-17T05:36:18Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/MySqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/Json1')]"
+			]
+		}
+	]
+}

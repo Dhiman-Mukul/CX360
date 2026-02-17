@@ -1,0 +1,84 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "CX360-Data-Migration"
+		},
+		"CX360DataMigration_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'CX360DataMigration'"
+		},
+		"TgtDataMigrationCX360_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'TgtDataMigrationCX360'"
+		},
+		"CX360DataMigration_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "127.0.0.1"
+		},
+		"CX360DataMigration_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "cx360_testing1"
+		},
+		"CX360DataMigration_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "root"
+		},
+		"TgtDataMigrationCX360_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mukul5911gen2.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "CX360-Data-Migration_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"TgtDataMigrationCX360_accountKey": {
+						"value": "[parameters('TgtDataMigrationCX360_accountKey')]"
+					},
+					"CX360DataMigration_password": {
+						"value": "[parameters('CX360DataMigration_password')]"
+					},
+					"TgtDataMigrationCX360_properties_typeProperties_url": {
+						"value": "[parameters('TgtDataMigrationCX360_properties_typeProperties_url')]"
+					},
+					"CX360DataMigration_properties_typeProperties_server": {
+						"value": "[parameters('CX360DataMigration_properties_typeProperties_server')]"
+					},
+					"CX360DataMigration_properties_typeProperties_database": {
+						"value": "[parameters('CX360DataMigration_properties_typeProperties_database')]"
+					},
+					"CX360DataMigration_properties_typeProperties_username": {
+						"value": "[parameters('CX360DataMigration_properties_typeProperties_username')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
