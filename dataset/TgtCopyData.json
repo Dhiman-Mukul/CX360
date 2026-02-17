@@ -1,0 +1,89 @@
+{
+	"name": "TgtCopyData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "TgtDataMigrationCX360",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"fileSystem": "cxmigrationdata"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"user_key_id": {
+					"type": "integer"
+				},
+				"user_id": {
+					"type": "integer"
+				},
+				"role_id": {
+					"type": "integer"
+				},
+				"role_name": {
+					"type": "string"
+				},
+				"first_name": {
+					"type": "string"
+				},
+				"last_name": {
+					"type": "string"
+				},
+				"user_mobile": {
+					"type": "string"
+				},
+				"is_active": {
+					"type": "boolean"
+				},
+				"date_joined": {
+					"type": "string"
+				},
+				"user_email": {
+					"type": "string"
+				},
+				"organisation_id": {
+					"type": "integer"
+				},
+				"user_processes": {
+					"type": "string"
+				},
+				"empcode": {
+					"type": "string"
+				},
+				"tenure": {
+					"type": "string"
+				},
+				"bucket": {
+					"type": "string"
+				},
+				"status": {
+					"type": "string"
+				},
+				"active_flag": {
+					"type": "integer"
+				},
+				"start_date": {
+					"type": "string"
+				},
+				"end_date": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

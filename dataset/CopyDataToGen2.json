@@ -1,0 +1,24 @@
+{
+	"name": "CopyDataToGen2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CX360DataMigration",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"table": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "MySqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": {
+				"value": "@dataset().table",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,23 @@
+{
+	"name": "CX360DataMigration",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "For the data migration created a service link for MySQL",
+		"annotations": [],
+		"type": "MySql",
+		"typeProperties": {
+			"server": "127.0.0.1",
+			"port": 3306,
+			"database": "cx360_testing1",
+			"username": "root",
+			"sslMode": 1,
+			"useSystemTrustStore": 0,
+			"driverVersion": "v2",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIyYjA4YzQ2Zi0xNDZiLTQ4MTMtOWM4ZC0zMDBkZTQ0YWVkMjciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "cx360datamigration",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

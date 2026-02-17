@@ -1,0 +1,6 @@
+{
+	"name": "cx360datamigration",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

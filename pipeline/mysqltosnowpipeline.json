@@ -1,0 +1,227 @@
+{
+	"name": "mysqltosnowpipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "mysqltoGen2pipeline",
+				"description": "mysql to Gen2 pipeline",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MySqlSource"
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "user_key_id",
+									"type": "Int32"
+								},
+								"sink": {
+									"path": "$['user_key_id']"
+								}
+							},
+							{
+								"source": {
+									"name": "user_id",
+									"type": "Int32"
+								},
+								"sink": {
+									"path": "$['user_id']"
+								}
+							},
+							{
+								"source": {
+									"name": "role_id",
+									"type": "Int32"
+								},
+								"sink": {
+									"path": "$['role_id']"
+								}
+							},
+							{
+								"source": {
+									"name": "role_name",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['role_name']"
+								}
+							},
+							{
+								"source": {
+									"name": "first_name",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['first_name']"
+								}
+							},
+							{
+								"source": {
+									"name": "last_name",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['last_name']"
+								}
+							},
+							{
+								"source": {
+									"name": "user_mobile",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['user_mobile']"
+								}
+							},
+							{
+								"source": {
+									"name": "is_active",
+									"type": "Boolean"
+								},
+								"sink": {
+									"path": "$['is_active']"
+								}
+							},
+							{
+								"source": {
+									"name": "date_joined",
+									"type": "DateTime"
+								},
+								"sink": {
+									"path": "$['date_joined']"
+								}
+							},
+							{
+								"source": {
+									"name": "user_email",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['user_email']"
+								}
+							},
+							{
+								"source": {
+									"name": "organisation_id",
+									"type": "Int32"
+								},
+								"sink": {
+									"path": "$['organisation_id']"
+								}
+							},
+							{
+								"source": {
+									"name": "user_processes",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['user_processes']"
+								}
+							},
+							{
+								"source": {
+									"name": "empcode",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['empcode']"
+								}
+							},
+							{
+								"source": {
+									"name": "tenure",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['tenure']"
+								}
+							},
+							{
+								"source": {
+									"name": "bucket",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['bucket']"
+								}
+							},
+							{
+								"source": {
+									"name": "status",
+									"type": "String"
+								},
+								"sink": {
+									"path": "$['status']"
+								}
+							},
+							{
+								"source": {
+									"name": "active_flag",
+									"type": "Int32"
+								},
+								"sink": {
+									"path": "$['active_flag']"
+								}
+							},
+							{
+								"source": {
+									"name": "start_date",
+									"type": "DateTime"
+								},
+								"sink": {
+									"path": "$['start_date']"
+								}
+							},
+							{
+								"source": {
+									"name": "end_date",
+									"type": "DateTime"
+								},
+								"sink": {
+									"path": "$['end_date']"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MySqlTable1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-02-17T05:36:18Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,9 @@
+{
+	"name": "CX360-Data-Migration",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "e4d58f6f-2f02-403f-b11a-044acd963270",
+		"tenantId": "db89c5d1-2290-4be1-b06d-4c2c6df1c8f4"
+	}
+}
